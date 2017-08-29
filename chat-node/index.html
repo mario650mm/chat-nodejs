@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Chat - Conversación</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+</head>
+<body>
+    <div class="container">
+        <h3>Bienvenido <span id="user"></span></h3>
+        <div class="col-md-8">
+            <div class="form-group">
+                <label for="txtArea">Mensajes</label>
+                <!--readonly-->
+                <textarea id="txtArea" cols="30" rows="20" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Introduce tu mensaje" id="mensaje_usuario"/>
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" id="nuevo_comentario" type="button">Enviar</button>
+                    </span>
+                </div><!-- /input-group -->
+            </div>
+        </div>
+        <input type="hidden" id="userid" name="userid" />
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+ <script>
+    var socket = io();
+    var userid = '';
+    window.onload = function(){
+        var url = window.location.pathname;
+        userid = url.replace('/chat/','');
+        document.getElementById('userid').value = userid;
+        /*setTimeout(function(){
+            socket.on('username'+userid,function(user){
+                
+            });
+        },700);*/
+        document.getElementById('user').innerHTML = 'us '+userid;
+    };
+    $(document).ready(function(){
+      $("#nuevo_comentario").click(function(){
+        var username = document.getElementById('user').innerHTML;
+        socket.emit('nuevo', $("#mensaje_usuario").val(),$("#userid").val(),username);
+        $("#mensaje_usuario").val("");
+      });
+
+      socket.on('refrescar',function(msg,username){
+        $("#txtArea").append(msg + '&nbsp;&nbsp; usuario: '+username+ '\n');
+      });  
+          });
+    </script>
+</body>
+</html>
