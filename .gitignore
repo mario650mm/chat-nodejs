@@ -1,3 +1,7 @@
+#Ignore node js
+
+node_modules/
+
 # MAC OS X
 *.DS_Store
 *.Trashes
